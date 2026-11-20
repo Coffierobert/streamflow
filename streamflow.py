@@ -64,3 +64,52 @@ dates, flows = load_streamflow(
 )
 
 plot_streamflow(dates, flows, sites)
+
+
+# Step 5: Create streamflow summary table
+import csv
+
+def summarize_streamflow(dates, flows, sites):
+    summary = []
+
+    print("\nPROVO RIVER STREAMFLOW SUMMARY")
+    print("-" * 90)
+    print(f"{'Site':<12} {'Min (cfs)':>12} {'Max (cfs)':>12} "
+          f"{'Mean (cfs)':>12} {'Date/Time of Max':>22}")
+
+    for i, site in enumerate(sites):
+        values = flows[:, i]
+
+        minimum = np.min(values)
+        maximum = np.max(values)
+        average = np.mean(values)
+
+        max_index = np.argmax(values)
+        max_date = str(dates[max_index])
+
+        summary.append([
+            site,
+            round(float(minimum), 2),
+            round(float(maximum), 2),
+            round(float(average), 2),
+            max_date
+        ])
+
+        print(f"{site:<12} {minimum:>12.2f} {maximum:>12.2f} "
+              f"{average:>12.2f} {max_date:>22}")
+
+    with open("streamflow_summary.csv", "w",
+              newline="") as file:
+        writer = csv.writer(file)
+
+        writer.writerow([
+            "Site", "Minimum (cfs)", "Maximum (cfs)",
+            "Average (cfs)", "Date/Time of Maximum"
+        ])
+
+        writer.writerows(summary)
+
+    print("\nSummary saved to streamflow_summary.csv")
+
+
+summarize_streamflow(dates, flows, sites)
