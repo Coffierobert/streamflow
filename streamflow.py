@@ -113,3 +113,30 @@ def summarize_streamflow(dates, flows, sites):
 
 
 summarize_streamflow(dates, flows, sites)
+
+
+# Step 6: Streamflow threshold report
+
+def threshold_report(dates, flows, sites):
+    threshold = float(input(
+        "\nEnter streamflow threshold (cfs): "
+    ))
+
+    # Data is recorded every 15 minutes
+    hours_per_record = 15 / 60
+
+    print("\nSTREAMFLOW THRESHOLD REPORT")
+    print(f"Threshold: {threshold} cfs")
+    print("-" * 55)
+
+    for i, site in enumerate(sites):
+        count = np.sum(flows[:, i] > threshold)
+        hours = count * hours_per_record
+
+        print(
+            f"Site {site}: {hours:.2f} hours "
+            f"above {threshold} cfs"
+        )
+
+
+threshold_report(dates, flows, sites)
